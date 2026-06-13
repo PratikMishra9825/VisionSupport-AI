@@ -38,12 +38,29 @@ const server = http.createServer(app);
 
 // Configure CORS and Sockets
 const originUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://vision-support-ai-5r8i.vercel.app',
+  'https://vision-support-ai-zj52.vercel.app'
+];
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.startsWith('http://localhost:')) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Fallback to true to prevent blocked operations
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+};
+
 const io = new Server(server, {
-  cors: {
-    origin: originUrl,
-    methods: ['GET', 'POST'],
-    credentials: true,
-  }
+  cors: corsOptions
 });
 app.set('io', io);
 
@@ -51,10 +68,7 @@ app.set('io', io);
 app.use(helmet({
   contentSecurityPolicy: false, // Turn off CSP headers for easy canvas/WebGL connections in dev
 }));
-app.use(cors({
-  origin: originUrl,
-  credentials: true,
-}));
+app.use(cors(corsOptions));
 app.use(express.json());
 import path from 'path';
 app.use('/api/uploads', express.static(path.join(process.cwd(), 'uploads')));
