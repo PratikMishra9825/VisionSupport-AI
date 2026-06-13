@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "npm run build && node dist/index.js",
     "kill-port": "for /f \"tokens=5\" %a in ('netstat -ano ^| findstr \":5000 \" ^| findstr LISTENING') do taskkill /PID %a /F 2>nul || true",
     "dev": "npm run kill-port 2>nul & nodemon src/index.ts",
     "build": "tsc"
