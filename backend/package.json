@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "npm run build",
-    "prestart": "npm run build",
     "start": "node dist/index.js",
     "kill-port": "for /f \"tokens=5\" %a in ('netstat -ano ^| findstr \":5000 \" ^| findstr LISTENING') do taskkill /PID %a /F 2>nul || true",
     "dev": "npm run kill-port 2>nul & nodemon src/index.ts",
