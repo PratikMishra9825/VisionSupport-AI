@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postinstall": "npm run build",
     "prestart": "npm run build",
     "start": "node dist/index.js",
     "kill-port": "for /f \"tokens=5\" %a in ('netstat -ano ^| findstr \":5000 \" ^| findstr LISTENING') do taskkill /PID %a /F 2>nul || true",
@@ -38,7 +39,8 @@
     "prom-client": "^15.1.0",
     "otplib": "^12.0.1",
     "speakeasy": "^2.0.0",
-    "qrcode": "^1.5.3"
+    "qrcode": "^1.5.3",
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
     "@types/speakeasy": "^2.0.7",
@@ -51,7 +53,6 @@
     "@types/node": "^25.9.3",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.14",
-    "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
+    "ts-node": "^10.9.2"
   }
 }
