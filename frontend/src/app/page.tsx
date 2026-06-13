@@ -152,10 +152,10 @@ export default function Home() {
       <ThreeBackground />
 
       {/* Futuristic Floating Header */}
-      <header className="relative z-10 max-w-7xl mx-auto px-6 py-5 flex justify-between items-center select-none">
-        <div className="flex items-center space-x-3">
-          <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
-          <h1 className="font-extrabold text-xl bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400 font-cyber uppercase tracking-wider">
+      <header className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-5 flex justify-between items-center select-none w-full">
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 animate-pulse" />
+          <h1 className="font-extrabold text-sm sm:text-xl bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400 font-cyber uppercase tracking-wider">
             VisionSupport AI
           </h1>
         </div>
@@ -164,18 +164,18 @@ export default function Home() {
           <a href="#demo" className="hover:text-white transition">LIVE DEMO</a>
           <a href="#stats" className="hover:text-white transition">TELEMETRY</a>
         </nav>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           <button 
             onClick={() => router.push('/login')} 
-            className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-cyber font-bold tracking-widest text-gray-200 transition"
+            className="px-3 sm:px-5 py-2 sm:py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] sm:text-xs font-cyber font-bold tracking-widest text-gray-200 transition"
           >
-            AGENT LOGIN
+            <span className="hidden sm:inline">AGENT </span>LOGIN
           </button>
           <button 
             onClick={() => setShowJoinModal(true)} 
-            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl text-xs font-cyber font-bold tracking-widest text-white transition shadow-lg shadow-purple-500/10 hover:shadow-purple-500/20"
+            className="px-3 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl text-[10px] sm:text-xs font-cyber font-bold tracking-widest text-white transition shadow-lg shadow-purple-500/10 hover:shadow-purple-500/20"
           >
-            JOIN SESSION
+            JOIN<span className="hidden sm:inline"> SESSION</span>
           </button>
         </div>
       </header>
