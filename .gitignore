@@ -47,3 +47,4 @@ backend/uploads/
 
 # Ignore GitHub Actions artifacts
 .github/workflows/*.log
+.vercel
