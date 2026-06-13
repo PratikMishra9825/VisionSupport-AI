@@ -57,7 +57,7 @@ app.use(cors({
 }));
 app.use(express.json());
 import path from 'path';
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/api/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Custom in-memory rate limiting middleware
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -80,19 +80,19 @@ const limiter = (req: express.Request, res: express.Response, next: express.Next
   }
   next();
 };
-app.use('/auth/', limiter);
+app.use('/api/auth/', limiter);
 
 // Mount Routing controllers
-app.use('/auth', authRoutes);
-app.use('/session', sessionRoutes);
-app.use('/files', fileRoutes);
-app.use('/admin', adminRoutes);
-app.use('/ai', aiRoutes);
-app.use('/tickets', ticketRoutes);
-app.use('/kb', kbRoutes);
-app.use('/copilot', copilotRoutes);
-app.use('/search', searchRoutes);
-app.use('/notifications', notificationRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/session', sessionRoutes);
+app.use('/api/files', fileRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/tickets', ticketRoutes);
+app.use('/api/kb', kbRoutes);
+app.use('/api/copilot', copilotRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Prometheus metrics endpoint
 app.get('/metrics', async (req, res) => {

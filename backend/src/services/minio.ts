@@ -104,8 +104,8 @@ export const getSignedDownloadUrl = async (bucket: string, objectName: string): 
   }
 
   // Fallback to local server routing endpoint (which handles decryption and download)
-  const apiHost = process.env.API_URL || 'http://localhost:5000';
-  return `${apiHost}/files/download/local/${bucket}/${objectName}`;
+  const apiHost = process.env.API_URL || '';
+  return `${apiHost}/api/files/download/local/${bucket}/${objectName}`;
 };
 
 // Initialize connection async on start

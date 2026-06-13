@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE, SOCKET_BASE } from '@/config';
 
 import { useState, useEffect } from 'react';
 import { useStore } from '@/store/useStore';
@@ -35,7 +36,7 @@ export default function FileShare({ sessionId }: FileShareProps) {
 
   const fetchSessionFiles = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/files/session/${sessionId}`);
+      const res = await fetch(`${API_BASE}/files/session/${sessionId}`);
       const data = await res.json();
       if (res.ok) setFiles(data);
     } catch (err) {
@@ -101,7 +102,7 @@ export default function FileShare({ sessionId }: FileShareProps) {
       formData.append('uploaderName', uploaderName || 'Customer Guest');
 
       try {
-        const res = await fetch('http://localhost:5000/files/upload/chunk', {
+        const res = await fetch(`${API_BASE}/files/upload/chunk`, {
           method: 'POST',
           body: formData,
         });
@@ -130,7 +131,7 @@ export default function FileShare({ sessionId }: FileShareProps) {
 
   const downloadFile = async (fileId: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/files/download/${fileId}`);
+      const res = await fetch(`${API_BASE}/files/download/${fileId}`);
       const data = await res.json();
       if (res.ok && data.downloadUrl) {
         // Trigger download
@@ -251,7 +252,7 @@ export default function FileShare({ sessionId }: FileShareProps) {
             <h4 className="text-lg font-bold mb-4 text-purple-400 truncate">{previewFile.filename}</h4>
             <div className="flex-1 overflow-auto bg-black rounded-lg flex items-center justify-center p-2">
               <img 
-                src={`http://localhost:5000/files/download/local/visionsupport-files/${previewFile.minioKey}`} 
+                src={`${API_BASE}/files/download/local/visionsupport-files/${previewFile.minioKey}`} 
                 alt={previewFile.filename} 
                 className="max-w-full max-h-[50vh] object-contain"
               />

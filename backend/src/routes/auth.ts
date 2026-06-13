@@ -541,8 +541,9 @@ router.post('/profile/photo', requireAgent, upload.single('photo'), async (req, 
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Relative web URL path
-    const photoUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    // Dynamic web URL path
+    const host = process.env.API_URL || `${req.protocol}://${req.get('host')}`;
+    const photoUrl = `${host}/api/uploads/${req.file.filename}`;
     user.profilePhoto = photoUrl;
     await user.save();
 

@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE, SOCKET_BASE } from '@/config';
 
 import { useEffect, useState, useRef, Suspense, useCallback } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
@@ -43,7 +44,8 @@ function SessionRoomInner() {
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const [screenSharing, setScreenSharing] = useState(false);
-  const [voiceAssistantActive, setVoiceAssistantActive] = useState(false);
+  const [voiceAssistantActiveState, setVoiceAssistantActive] = useState(false);
+  const voiceAssistantActive = voiceAssistantActiveState;
   const [portalToken, setPortalToken] = useState('');
   const [mediaError, setMediaError] = useState<string | null>(null);
   const recognitionRef = useRef<any>(null);
@@ -700,7 +702,7 @@ function SessionRoomInner() {
           socketRef.current = null;
         }
 
-        const socketUrl = 'http://localhost:5000';
+        const socketUrl = SOCKET_BASE;
         const socketInstance = io(socketUrl, {
           auth: { token },
           transports: ['websocket'],
@@ -865,7 +867,7 @@ function SessionRoomInner() {
           setActiveTab('whiteboard');
         } else if (text.includes('generate summary')) {
           console.log('[Voice Assistant] Executing command: Generate summary');
-          fetch(`http://localhost:5000/ai/session/${sessionId}/analyze`, {
+          fetch(`${API_BASE}/ai/session/${sessionId}/analyze`, {
             method: 'POST'
           }).then(() => alert('AI meeting summary and ticket generated successfully!')).catch(e => console.error(e));
         }
@@ -887,7 +889,7 @@ function SessionRoomInner() {
     return () => {
       try { rec.stop(); } catch(e){}
     };
-  }, [voiceAssistantActive, sessionId]);
+  }, [voiceAssistantActive, sessionId] as any[]);
 
   useEffect(() => {
     const handleAutoplayBlocked = () => {
@@ -1053,7 +1055,7 @@ function SessionRoomInner() {
         producers.push({ producerId: localVideoProducerRef.current.id, kind: 'video' });
       }
 
-      const res = await fetch('http://localhost:5000/session/record/start', {
+      const res = await fetch(`${API_BASE}/session/record/start`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1072,7 +1074,7 @@ function SessionRoomInner() {
   const stopSessionRecording = async () => {
     try {
       setRecordingState('processing');
-      const res = await fetch('http://localhost:5000/session/record/stop', {
+      const res = await fetch(`${API_BASE}/session/record/stop`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1092,7 +1094,7 @@ function SessionRoomInner() {
   const endSession = async () => {
     if (role === 'agent' || role === 'supervisor') {
       try {
-        await fetch('http://localhost:5000/session/end', {
+        await fetch(`${API_BASE}/session/end`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -1585,7 +1587,7 @@ function SessionRoomInner() {
                   setSubmittingCsat(true);
                   let finalToken = portalToken;
                   try {
-                    const res = await fetch(`http://localhost:5000/session/${sessionId}/csat`, {
+                    const res = await fetch(`${API_BASE}/session/${sessionId}/csat`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ rating: csatRating, feedback: csatFeedback })
@@ -1653,7 +1655,7 @@ function CustomerJoinNameForm({ sessionId, inviteToken, setAuth, setSession, onJ
     setError('');
 
     try {
-      const res = await fetch('http://localhost:5000/session/join', {
+      const res = await fetch(`${API_BASE}/session/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

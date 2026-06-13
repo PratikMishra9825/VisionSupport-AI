@@ -46,19 +46,7 @@ ingress:
         - path: /
           pathType: Prefix
           backendType: frontend
-        - path: /auth
-          pathType: Prefix
-          backendType: backend
-        - path: /session
-          pathType: Prefix
-          backendType: backend
-        - path: /files
-          pathType: Prefix
-          backendType: backend
-        - path: /admin
-          pathType: Prefix
-          backendType: backend
-        - path: /ai
+        - path: /api
           pathType: Prefix
           backendType: backend
         - path: /socket.io

@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE, SOCKET_BASE } from '@/config';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -61,7 +62,7 @@ export default function AdminPanel() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://localhost:5000/admin/users', {
+      const res = await fetch(`${API_BASE}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -73,7 +74,7 @@ export default function AdminPanel() {
 
   const fetchLiveSessions = async () => {
     try {
-      const res = await fetch('http://localhost:5000/admin/sessions/live', {
+      const res = await fetch(`${API_BASE}/admin/sessions/live`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -85,7 +86,7 @@ export default function AdminPanel() {
 
   const fetchAuditLogs = async () => {
     try {
-      const res = await fetch('http://localhost:5000/admin/audit-logs', {
+      const res = await fetch(`${API_BASE}/admin/audit-logs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -97,7 +98,7 @@ export default function AdminPanel() {
 
   const fetchAnalyticsSummary = async () => {
     try {
-      const res = await fetch('http://localhost:5000/admin/analytics/summary', {
+      const res = await fetch(`${API_BASE}/admin/analytics/summary`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -114,7 +115,7 @@ export default function AdminPanel() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:5000/admin/users/create', {
+      const res = await fetch(`${API_BASE}/admin/users/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +157,7 @@ export default function AdminPanel() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:5000/admin/users/reset-password', {
+      const res = await fetch(`${API_BASE}/admin/users/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -186,7 +187,7 @@ export default function AdminPanel() {
     setError('');
     setMessage('');
     try {
-      const res = await fetch('http://localhost:5000/admin/users/update-role', {
+      const res = await fetch(`${API_BASE}/admin/users/update-role`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -211,7 +212,7 @@ export default function AdminPanel() {
     setError('');
     setMessage('');
     try {
-      const res = await fetch('http://localhost:5000/admin/users/toggle-2fa', {
+      const res = await fetch(`${API_BASE}/admin/users/toggle-2fa`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -236,7 +237,7 @@ export default function AdminPanel() {
     setError('');
     setMessage('');
     try {
-      const res = await fetch('http://localhost:5000/admin/users/toggle-disabled', {
+      const res = await fetch(`${API_BASE}/admin/users/toggle-disabled`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -260,7 +261,7 @@ export default function AdminPanel() {
   const terminateSession = async (sessionId: string) => {
     if (!confirm('Are you sure you want to force terminate this session?')) return;
     try {
-      const res = await fetch('http://localhost:5000/admin/sessions/terminate', {
+      const res = await fetch(`${API_BASE}/admin/sessions/terminate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

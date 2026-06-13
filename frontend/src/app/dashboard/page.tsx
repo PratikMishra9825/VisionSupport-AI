@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE, SOCKET_BASE } from '@/config';
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
@@ -89,7 +90,7 @@ export default function Dashboard() {
     if (!token) return;
     const fetchStats = async () => {
       try {
-        const res = await fetch('http://localhost:5000/admin/metrics', {
+        const res = await fetch(`${API_BASE}/admin/metrics`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
@@ -204,7 +205,7 @@ export default function Dashboard() {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch('http://localhost:5000/session/history', {
+      const res = await fetch(`${API_BASE}/session/history`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -216,7 +217,7 @@ export default function Dashboard() {
 
   const fetchLiveSessions = async () => {
     try {
-      const res = await fetch('http://localhost:5000/admin/sessions/live', {
+      const res = await fetch(`${API_BASE}/admin/sessions/live`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -228,7 +229,7 @@ export default function Dashboard() {
 
   const fetchAuditLogs = async () => {
     try {
-      const res = await fetch('http://localhost:5000/admin/audit-logs', {
+      const res = await fetch(`${API_BASE}/admin/audit-logs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -245,7 +246,7 @@ export default function Dashboard() {
       if (filterStatus) queryParams.append('status', filterStatus);
       if (filterPriority) queryParams.append('priority', filterPriority);
 
-      const res = await fetch(`http://localhost:5000/tickets?${queryParams.toString()}`, {
+      const res = await fetch(`${API_BASE}/tickets?${queryParams.toString()}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -258,8 +259,8 @@ export default function Dashboard() {
   const fetchKbArticles = async () => {
     try {
       const url = kbQuery 
-        ? `http://localhost:5000/kb?q=${encodeURIComponent(kbQuery)}` 
-        : 'http://localhost:5000/kb';
+        ? `${API_BASE}/kb?q=${encodeURIComponent(kbQuery)}` 
+        : `${API_BASE}/kb`;
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -272,7 +273,7 @@ export default function Dashboard() {
 
   const fetchDeviceSessions = async () => {
     try {
-      const res = await fetch('http://localhost:5000/auth/sessions', {
+      const res = await fetch(`${API_BASE}/auth/sessions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -284,7 +285,7 @@ export default function Dashboard() {
 
   const createSession = async () => {
     try {
-      const res = await fetch('http://localhost:5000/session/create', {
+      const res = await fetch(`${API_BASE}/session/create`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -307,7 +308,7 @@ export default function Dashboard() {
   const terminateSession = async (sessionId: string) => {
     if (!confirm('Are you sure you want to force terminate this session?')) return;
     try {
-      const res = await fetch('http://localhost:5000/admin/sessions/terminate', {
+      const res = await fetch(`${API_BASE}/admin/sessions/terminate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -327,7 +328,7 @@ export default function Dashboard() {
 
   const disconnectUser = async (sessionId: string, userId: string) => {
     try {
-      const res = await fetch('http://localhost:5000/admin/participants/disconnect', {
+      const res = await fetch(`${API_BASE}/admin/participants/disconnect`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -350,7 +351,7 @@ export default function Dashboard() {
     setTfaError('');
     setTfaSuccess('');
     try {
-      const res = await fetch('http://localhost:5000/auth/2fa/setup', {
+      const res = await fetch(`${API_BASE}/auth/2fa/setup`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -376,7 +377,7 @@ export default function Dashboard() {
     setTfaError('');
     setTfaSuccess('');
     try {
-      const res = await fetch('http://localhost:5000/auth/2fa/enable', {
+      const res = await fetch(`${API_BASE}/auth/2fa/enable`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -404,7 +405,7 @@ export default function Dashboard() {
     setFeedbackErr('');
     setFeedbackMsg('');
     try {
-      const res = await fetch(`http://localhost:5000/tickets/${ticketId}`, {
+      const res = await fetch(`${API_BASE}/tickets/${ticketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -431,7 +432,7 @@ export default function Dashboard() {
     setFeedbackErr('');
     setFeedbackMsg('');
     try {
-      const res = await fetch('http://localhost:5000/kb/convert-ticket', {
+      const res = await fetch(`${API_BASE}/kb/convert-ticket`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -457,7 +458,7 @@ export default function Dashboard() {
   const revokeSession = async (sessionId: string) => {
     if (!confirm('Are you sure you want to terminate this login session?')) return;
     try {
-      const res = await fetch('http://localhost:5000/auth/sessions/logout', {
+      const res = await fetch(`${API_BASE}/auth/sessions/logout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -481,7 +482,7 @@ export default function Dashboard() {
     setFeedbackErr('');
     setFeedbackMsg('');
     try {
-      const res = await fetch('http://localhost:5000/auth/profile', {
+      const res = await fetch(`${API_BASE}/auth/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -532,7 +533,7 @@ export default function Dashboard() {
     setFeedbackMsg('');
 
     try {
-      const res = await fetch('http://localhost:5000/auth/profile/photo', {
+      const res = await fetch(`${API_BASE}/auth/profile/photo`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -574,7 +575,7 @@ export default function Dashboard() {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/auth/change-password', {
+      const res = await fetch(`${API_BASE}/auth/change-password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -605,7 +606,7 @@ export default function Dashboard() {
   // Active Session logout
   const handleLogout = async () => {
     try {
-      await fetch('http://localhost:5000/auth/logout', {
+      await fetch(`${API_BASE}/auth/logout`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -988,13 +989,13 @@ export default function Dashboard() {
                           {/* Export buttons & Solved conversion action */}
                           <div className="flex flex-wrap gap-3 pt-2 text-[10px] font-cyber font-bold select-none border-t border-white/5">
                             <a 
-                              href={`http://localhost:5000/tickets/${t.ticketId}/export/csv?token=${token}`}
+                              href={`${API_BASE}/tickets/${t.ticketId}/export/csv?token=${token}`}
                               className="px-3 py-1.5 bg-white/5 border border-white/10 hover:bg-white/10 rounded-lg text-gray-300 flex items-center gap-1.5 transition"
                             >
                               <Download size={11} /> CSV Export
                             </a>
                             <a 
-                              href={`http://localhost:5000/tickets/${t.ticketId}/export/pdf?token=${token}`}
+                              href={`${API_BASE}/tickets/${t.ticketId}/export/pdf?token=${token}`}
                               className="px-3 py-1.5 bg-white/5 border border-white/10 hover:bg-white/10 rounded-lg text-gray-300 flex items-center gap-1.5 transition"
                             >
                               <FileText size={11} /> PDF Document

@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE, SOCKET_BASE } from '@/config';
 
 import { useState, useEffect } from 'react';
 import { useStore } from '@/store/useStore';
@@ -43,7 +44,7 @@ export default function AIAssistantPanel({ sessionId, transcripts }: AIAssistant
     const fetchCopilotData = async () => {
       if (!token) return;
       try {
-        const res = await fetch(`http://localhost:5000/copilot/${sessionId}/copilot`, {
+        const res = await fetch(`${API_BASE}/copilot/${sessionId}/copilot`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

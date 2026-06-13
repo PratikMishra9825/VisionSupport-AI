@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE, SOCKET_BASE } from '@/config';
 
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '@/store/useStore';
@@ -33,7 +34,7 @@ export default function DashboardCharts() {
     // Telemetry polling interval
     const interval = setInterval(async () => {
       try {
-        const res = await fetch('http://localhost:5000/admin/metrics', {
+        const res = await fetch(`${API_BASE}/admin/metrics`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();

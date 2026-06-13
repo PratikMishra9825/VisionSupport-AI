@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE, SOCKET_BASE } from '@/config';
 
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -67,7 +68,7 @@ export default function CustomerPortal() {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(`http://localhost:5000/session/portal/${token}`);
+        const res = await fetch(`${API_BASE}/session/portal/${token}`);
         if (!res.ok) {
           const errData = await res.json();
           throw new Error(errData.error || 'Portal link is invalid or has expired.');
@@ -86,7 +87,7 @@ export default function CustomerPortal() {
 
   const handleDownload = async (fileId: string, filename: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/files/download/${fileId}`);
+      const res = await fetch(`${API_BASE}/files/download/${fileId}`);
       if (!res.ok) throw new Error('Download failed');
       const resData = await res.json();
       if (resData.downloadUrl) {
@@ -241,7 +242,7 @@ export default function CustomerPortal() {
               <div className="border border-white/10 glass-panel rounded-3xl bg-black overflow-hidden relative shadow-2xl aspect-video">
                 <video 
                   ref={videoRef}
-                  src={activeRecording.videoUrl || `http://localhost:5000/uploads/recordings/${activeRecording.recordingId}.webm`}
+                  src={activeRecording.videoUrl || `${API_BASE}/uploads/recordings/${activeRecording.recordingId}.webm`}
                   controls
                   className="w-full h-full object-contain"
                   poster={activeRecording.thumbnailUrl}

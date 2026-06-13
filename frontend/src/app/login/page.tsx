@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE, SOCKET_BASE } from '@/config';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -51,7 +52,7 @@ export default function Login() {
   useEffect(() => {
     const fetchCsrf = async () => {
       try {
-        const res = await fetch('http://localhost:5000/auth/csrf-token');
+        const res = await fetch(`${API_BASE}/auth/csrf-token`);
         const data = await res.json();
         if (res.ok) {
           setCsrfToken(data.csrfToken);
@@ -70,7 +71,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:5000/auth/login', {
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -136,7 +137,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:5000/auth/2fa/verify-login', {
+      const res = await fetch(`${API_BASE}/auth/2fa/verify-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ twoFactorToken, code: otpCode })
@@ -202,7 +203,7 @@ export default function Login() {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/auth/register', {
+      const res = await fetch(`${API_BASE}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -241,7 +242,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:5000/auth/verify-email', {
+      const res = await fetch(`${API_BASE}/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: verifyEmail, code: verifyCode })
@@ -270,7 +271,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:5000/auth/forgot-password', {
+      const res = await fetch(`${API_BASE}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: forgotEmail })
@@ -307,7 +308,7 @@ export default function Login() {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/auth/reset-password', {
+      const res = await fetch(`${API_BASE}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

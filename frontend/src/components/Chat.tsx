@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE, SOCKET_BASE } from '@/config';
 
 import React, { useState, useEffect, useRef, memo } from 'react';
 import { useStore, MessagePayload } from '@/store/useStore';
@@ -90,7 +91,7 @@ const Chat = memo(function Chat({ socket, sessionId }: ChatProps) {
       setTypingUser('VisionSupport Bot');
       
       const history = messages.slice(-10).map(m => ({ role: m.senderRole, text: m.text }));
-      const res = await fetch('http://localhost:5000/ai/translate', { // Reuse AI routing config
+      const res = await fetch(`${API_BASE}/ai/translate`, { // Reuse AI routing config
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: prompt, targetLanguage: 'English' }), // We can send direct bot queries here
