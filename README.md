@@ -32,6 +32,97 @@ This repository is structured as a full-stack platform:
 - `helm/` — Kubernetes Helm charts for production deployment
 - `k8s/` — Example Kubernetes manifest files
 
+## 🌐 Website Flow
+
+```mermaid
+flowchart TD
+    subgraph Client[Browser / PWA]
+      A[Login / Agent Dashboard]
+      B[Customer Join Page]
+      C[Chat / Whiteboard UI]
+      D[Live Media & Analytics]
+    end
+
+    subgraph Server[Backend Services]
+      E[Express REST API]
+      F[Socket.IO Signaling]
+      G[MediaSoup SFU]
+      H[Gemini AI / Analytics]
+      I[MinIO File Storage]
+      J[MongoDB / Redis / Elasticsearch]
+    end
+
+    A -->|auth & session create| E
+    B -->|join request| E
+    C -->|socket events| F
+    C -->|collaboration| F
+    D -->|audio/video streams| G
+    G -->|media routing| F
+    E -->|store audit/logs| J
+    C -->|file upload/download| I
+    H -->|analysis data| E
+    D -->|transcript + insights| H
+    E -->|search / metrics| J
+```
+
+## 🧠 Tech Stack Diagram
+
+```mermaid
+flowchart LR
+    subgraph Frontend[Frontend]
+      F1[Next.js]
+      F2[React Components]
+      F3[Socket.IO Client]
+      F4[Tailwind / CSS]
+    end
+
+    subgraph Backend[Backend]
+      B1[Node.js / Express]
+      B2[Socket.IO Server]
+      B3[MediaSoup SFU]
+      B4[Gemini AI Service]
+      B5[MinIO + AES-256]
+    end
+
+    subgraph Infrastructure[Infrastructure]
+      I1[MongoDB Replica Set]
+      I2[Redis Cache]
+      I3[Elasticsearch]
+      I4[Prometheus / Grafana / Jaeger]
+      I5[Nginx Reverse Proxy]
+      I6[Docker / Kubernetes]
+    end
+
+    F1 --> B1
+    F3 --> B2
+    B2 --> B3
+    B1 --> B4
+    B1 --> B5
+    B1 --> I1
+    B1 --> I2
+    B1 --> I3
+    B1 --> I4
+    I5 --> F1
+    I5 --> B1
+    I6 --> F1
+    I6 --> B1
+    I6 --> I1
+    I6 --> I2
+    I6 --> I3
+    I6 --> I4
+    I6 --> I5
+```
+
+## 🧩 Website Modules
+
+- **Authentication:** login, JWT, and 2FA
+- **Session Management:** agent invitations, joining guests, and session lifecycle
+- **Real-Time Collaboration:** live chat, reactions, whiteboard, and presence signals
+- **Media Processing:** audio/video routing through MediaSoup and selective consumer streams
+- **AI Analytics:** live transcription, sentiment analysis, and conversation metrics
+- **Secure File Sharing:** chunked uploads, encrypted MinIO storage, and signed downloads
+- **Monitoring & Observability:** Prometheus metrics, Jaeger traces, and Grafana dashboards
+
 ---
 
 ## ⚙️ Getting Started
@@ -39,6 +130,7 @@ This repository is structured as a full-stack platform:
 ### Local development
 
 1. Install dependencies
+
 ```bash
 cd backend
 npm install
@@ -47,12 +139,14 @@ npm install
 ```
 
 2. Start the backend
+
 ```bash
 cd backend
 npm run dev
 ```
 
 3. Start the frontend
+
 ```bash
 cd ../frontend
 npm run dev
@@ -105,17 +199,20 @@ NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
 ## 📄 API Summary
 
 ### Authentication
+
 - `POST /auth/login` — login with email/password
 - `POST /auth/2fa/verify-login` — verify multi-factor authentication
 - `POST /auth/refresh` — refresh JWT access tokens
 
 ### Sessions
+
 - `POST /session/create` — create a new agent support session
 - `POST /session/join` — join an active session via invite token
 - `POST /session/end` — end the session cleanly
 - `GET /session/:sessionId/logs` — retrieve audit/event logs
 
 ### File management
+
 - `POST /files/upload/chunk` — upload file chunks to MinIO
 - `GET /files/download/:fileId` — download file securely via signed URL
 
@@ -145,6 +242,6 @@ This repository does not include a license file. Add one if you want to publish 
 
 ## 🔍 Troubleshooting Guide
 
-* **MediaSoup Port Allocations:** MediaSoup requires a specific UDP/TCP port range (by default `10000` to `10100`). In container environments like Kubernetes, ensure `hostNetwork: true` is set, or that service configuration mappings bind the full range to host allocations.
-* **2FA Drift Errors:** If Google Authenticator codes fail validation, ensure NTP network time synchronization is enabled on the server host.
-* **Elasticsearch Startup Delays:** During docker-compose bootstrap, Elasticsearch may require up to 60 seconds to open socket connections. The backend service includes connection-retry policies to prevent container exit.
+- **MediaSoup Port Allocations:** MediaSoup requires a specific UDP/TCP port range (by default `10000` to `10100`). In container environments like Kubernetes, ensure `hostNetwork: true` is set, or that service configuration mappings bind the full range to host allocations.
+- **2FA Drift Errors:** If Google Authenticator codes fail validation, ensure NTP network time synchronization is enabled on the server host.
+- **Elasticsearch Startup Delays:** During docker-compose bootstrap, Elasticsearch may require up to 60 seconds to open socket connections. The backend service includes connection-retry policies to prevent container exit.
