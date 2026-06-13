@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend
+  namespace: {{ .Release.Namespace | default "visionsupport" }}
+  labels:
+    app: visionsupport-backend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: visionsupport-backend
+  template:
+    metadata:
+      labels:
+        app: visionsupport-backend
+    spec:
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.backend.env.PORT }}
+              name: http
+          env:
+            - name: PORT
+              value: "{{ .Values.backend.env.PORT }}"
+            - name: MONGODB_URI
+              value: "{{ .Values.backend.env.MONGODB_URI }}"
+            - name: REDIS_URL
+              value: "{{ .Values.backend.env.REDIS_URL }}"
+            - name: JWT_SECRET
+              value: "{{ .Values.backend.env.JWT_SECRET }}"
+            - name: AES_KEY
+              value: "{{ .Values.backend.env.AES_KEY }}"
+            - name: GEMINI_API_KEY
+              value: "{{ .Values.backend.env.GEMINI_API_KEY }}"
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 15

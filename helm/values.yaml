@@ -1,0 +1,66 @@
+# Default values for visionsupport-ai.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+backend:
+  image:
+    repository: visionsupport-backend
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5000
+  env:
+    PORT: 5000
+    MONGODB_URI: "mongodb://mongo-replica-set:27017/visionsupport"
+    REDIS_URL: "redis://redis-master:6379"
+    JWT_SECRET: "visionsupport_super_secret_jwt_key"
+    AES_KEY: "visionsupport_super_aes_secret_key_32_bytes"
+    GEMINI_API_KEY: "your_google_gemini_api_key_here"
+
+frontend:
+  image:
+    repository: visionsupport-frontend
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3000
+  env:
+    NEXT_PUBLIC_API_URL: "http://visionsupport.local"
+    NEXT_PUBLIC_SOCKET_URL: "http://visionsupport.local"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+  hosts:
+    - host: visionsupport.local
+      paths:
+        - path: /
+          pathType: Prefix
+          backendType: frontend
+        - path: /auth
+          pathType: Prefix
+          backendType: backend
+        - path: /session
+          pathType: Prefix
+          backendType: backend
+        - path: /files
+          pathType: Prefix
+          backendType: backend
+        - path: /admin
+          pathType: Prefix
+          backendType: backend
+        - path: /ai
+          pathType: Prefix
+          backendType: backend
+        - path: /socket.io
+          pathType: Prefix
+          backendType: backend

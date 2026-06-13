@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-frontend
+  namespace: {{ .Release.Namespace | default "visionsupport" }}
+  labels:
+    app: visionsupport-frontend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: visionsupport-frontend
+  template:
+    metadata:
+      labels:
+        app: visionsupport-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.frontend.service.port }}
+              name: http
+          env:
+            - name: NEXT_PUBLIC_API_URL
+              value: "{{ .Values.frontend.env.NEXT_PUBLIC_API_URL }}"
+            - name: NEXT_PUBLIC_SOCKET_URL
+              value: "{{ .Values.frontend.env.NEXT_PUBLIC_SOCKET_URL }}"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 15

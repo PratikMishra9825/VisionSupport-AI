@@ -1,0 +1,175 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: visionsupport-backend
+    ports:
+      - "5000:5000"
+      - "10000-10100:10000-10100/udp"
+      - "10000-10100:10000-10100/tcp"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/visionsupport?replicaSet=rs0
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=gAWUIHRQ$@&%*(RYIFH)
+      - FRONTEND_URL=http://localhost:3000
+      - MEDIASOUP_MIN_PORT=10000
+      - MEDIASOUP_MAX_PORT=10100
+      - MEDIASOUP_LISTEN_IP=0.0.0.0
+      - MEDIASOUP_ANNOUNCED_IP=127.0.0.1
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - mongo
+      - redis
+      - minio
+      - elasticsearch
+      - jaeger
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./backend/uploads:/usr/src/app/uploads
+
+  frontend:
+    build: ./frontend
+    container_name: visionsupport-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:80/api
+      - NEXT_PUBLIC_SOCKET_URL=http://localhost:80
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+
+  mongo:
+    image: mongo:latest
+    container_name: visionsupport-mongo
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  mongo-init:
+    image: mongo:latest
+    container_name: visionsupport-mongo-init
+    depends_on:
+      - mongo
+    entrypoint: [ "bash", "-c", "sleep 5 && mongosh --host mongo:27017 --eval 'rs.initiate({_id:\"rs0\",members:[{_id:0,host:\"mongo:27017\"}]})' || true" ]
+
+  redis:
+    image: redis:latest
+    container_name: visionsupport-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    container_name: visionsupport-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.1
+    container_name: visionsupport-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: visionsupport-jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+
+  minio:
+    image: minio/minio:latest
+    container_name: visionsupport-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - minio-data:/data
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: visionsupport-minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      bash -c "
+      sleep 5;
+      mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      mc mb myminio/visionsupport-recordings || true;
+      mc mb myminio/visionsupport-files || true;
+      mc policy set public myminio/visionsupport-recordings || true;
+      mc policy set public myminio/visionsupport-files || true;
+      exit 0;
+      "
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: visionsupport-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: visionsupport-grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+
+  loki:
+    image: grafana/loki:latest
+    container_name: visionsupport-loki
+    ports:
+      - "3100:3100"
+
+  nginx:
+    image: nginx:latest
+    container_name: visionsupport-nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+      - minio
+
+volumes:
+  mongo-data:
+  redis-data:
+  es-data:
+  minio-data:
