@@ -15,7 +15,7 @@ import AIAssistantPanel from '@/components/AIAssistantPanel';
 import { 
   Tv, Eye, ShieldCheck, UserCheck, MessageSquare, Edit2, 
   HelpCircle, Sparkles, Mic, FileText, Settings, Play, Square, Pause, Star,
-  ShieldAlert
+  ShieldAlert, Activity
 } from 'lucide-react';
 
 function SessionRoomInner() {
@@ -1178,12 +1178,14 @@ function SessionRoomInner() {
       className="min-h-screen bg-[#04020a] text-white flex flex-col grid-dots overflow-hidden w-full"
     >
       {/* Top Header */}
-      <header className="flex justify-between items-center p-4 bg-black/60 border-b border-white/10 backdrop-blur select-none">
-        <div className="flex items-center space-x-3">
-          <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
-          <h1 className="font-extrabold text-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400 font-cyber">
-            VisionSupport AI
-          </h1>
+      <header className="flex flex-col md:flex-row gap-3 md:gap-0 justify-between items-center p-4 bg-black/60 border-b border-white/10 backdrop-blur select-none">
+        <div className="flex items-center space-x-3 w-full md:w-auto justify-between md:justify-start">
+          <div className="flex items-center space-x-2">
+            <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
+            <h1 className="font-extrabold text-sm sm:text-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400 font-cyber">
+              VisionSupport AI
+            </h1>
+          </div>
           <span className="text-[10px] text-gray-500 font-mono bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
             Session: {sessionId?.substring(0,8)}...
           </span>
@@ -1200,8 +1202,8 @@ function SessionRoomInner() {
           </motion.div>
         )}
 
-        <div className="flex items-center space-x-4">
-          <span className="text-xs text-purple-400 font-mono capitalize">{role}</span>
+        <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 md:space-x-4 w-full md:w-auto">
+          <span className="text-xs text-purple-400 font-mono capitalize hidden sm:inline">{role}</span>
           
           {/* Diagnostics HUD Toggle */}
           <motion.button 
@@ -1209,9 +1211,11 @@ function SessionRoomInner() {
             whileTap={{ scale: 0.96 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             onClick={() => setShowDiagnostics(!showDiagnostics)}
-            className="bg-purple-950/40 border border-purple-500/30 text-purple-400 hover:bg-purple-900/20 text-xs px-3.5 py-1.5 rounded-lg font-bold transition font-cyber"
+            className="bg-purple-950/40 border border-purple-500/30 text-purple-400 hover:bg-purple-900/20 text-xs px-3.5 py-1.5 rounded-lg font-bold transition font-cyber flex items-center gap-1.5"
           >
-            Diagnostics HUD
+            <Activity className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Diagnostics HUD</span>
+            <span className="sm:hidden">HUD</span>
           </motion.button>
 
           {/* Voice Command Button */}
@@ -1231,13 +1235,15 @@ function SessionRoomInner() {
               }`}
               title="Enable Voice Commands Assistant"
             >
-              <Mic className="w-3.5 h-3.5" /> Voice Copilot
+              <Mic className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Voice Copilot</span>
+              <span className="sm:hidden">Copilot</span>
             </motion.button>
           )}
 
           {/* Recording buttons (Agent/Supervisor only) */}
           {(role === 'agent' || role === 'supervisor') && (
-            <div className="flex items-center space-x-2 border-r border-white/10 pr-4">
+            <div className="flex items-center space-x-2 border-r border-white/10 pr-2 md:pr-4">
               {recordingState === 'idle' ? (
                 <motion.button 
                   whileHover={{ scale: 1.03 }}
@@ -1246,7 +1252,9 @@ function SessionRoomInner() {
                   onClick={startSessionRecording}
                   className="px-3 py-1.5 bg-red-950/20 border border-red-500/30 text-red-400 hover:bg-red-900/20 text-xs rounded-lg font-bold flex items-center gap-1.5 transition"
                 >
-                  <Play size={12} /> Record
+                  <Play size={12} />
+                  <span className="hidden sm:inline">Record</span>
+                  <span className="sm:hidden">Rec</span>
                 </motion.button>
               ) : recordingState === 'recording' ? (
                 <motion.button 
@@ -1256,11 +1264,14 @@ function SessionRoomInner() {
                   onClick={stopSessionRecording}
                   className="px-3 py-1.5 bg-red-600 text-white text-xs rounded-lg font-bold flex items-center gap-1.5 transition animate-pulse"
                 >
-                  <Square size={12} /> Stop
+                  <Square size={12} />
+                  <span className="hidden sm:inline">Stop</span>
+                  <span className="sm:hidden">Stop</span>
                 </motion.button>
               ) : (
                 <span className="text-xs text-gray-500 font-mono flex items-center gap-1">
-                  <Settings className="w-3.5 h-3.5 animate-spin" /> Processing
+                  <Settings className="w-3.5 h-3.5 animate-spin" />
+                  <span className="hidden sm:inline">Processing</span>
                 </span>
               )}
             </div>
@@ -1273,23 +1284,67 @@ function SessionRoomInner() {
             onClick={endSession}
             className="bg-red-900/20 border border-red-500/30 text-red-400 hover:bg-red-800/20 text-xs px-4 py-2 rounded-lg font-bold transition"
           >
-            {role === 'agent' || role === 'supervisor' ? 'End Session' : 'Leave Session'}
+            {role === 'agent' || role === 'supervisor' ? (
+              <>
+                <span className="hidden sm:inline">End Session</span>
+                <span className="sm:hidden">End</span>
+              </>
+            ) : (
+              <>
+                <span className="hidden sm:inline">Leave Session</span>
+                <span className="sm:hidden">Leave</span>
+              </>
+            )}
           </motion.button>
         </div>
       </header>
 
       {/* Main body split */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        {/* Mobile Tabs bar */}
+        <div className="flex lg:hidden bg-white/5 border border-white/10 p-1.5 rounded-xl mx-4 mt-4 select-none text-xs font-cyber font-bold space-x-1 shrink-0 overflow-x-auto no-scrollbar">
+          <button
+            onClick={() => setActiveTab('video')}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg transition whitespace-nowrap ${activeTab === 'video' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Tv size={14} /> Streams
+          </button>
+          <button
+            onClick={() => setActiveTab('whiteboard')}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg transition whitespace-nowrap ${activeTab === 'whiteboard' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Edit2 size={14} /> Board
+          </button>
+          <button
+            onClick={() => setActiveTab('chat')}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg transition whitespace-nowrap ${activeTab === 'chat' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+          >
+            <MessageSquare size={14} /> Chat
+          </button>
+          <button
+            onClick={() => setActiveTab('files')}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg transition whitespace-nowrap ${activeTab === 'files' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+          >
+            <FileText size={14} /> Repository
+          </button>
+          <button
+            onClick={() => setActiveTab('ai')}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg transition whitespace-nowrap ${activeTab === 'ai' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Sparkles size={14} /> AI
+          </button>
+        </div>
+
         {/* Left Column: Feeds & Canvas */}
         <div className="flex-1 flex flex-col p-4 space-y-4 overflow-hidden">
-          {/* Tabs bar */}
-          <div className="flex bg-white/5 border border-white/10 p-1.5 rounded-xl self-start space-x-2 select-none text-xs font-cyber font-bold">
+          {/* Desktop Tabs bar */}
+          <div className="hidden lg:flex bg-white/5 border border-white/10 p-1.5 rounded-xl self-start space-x-2 select-none text-xs font-cyber font-bold">
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.96 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
               onClick={() => setActiveTab('video')}
-              className={`px-4 py-1.5 rounded-lg transition ${activeTab === 'video' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+              className={`px-4 py-1.5 rounded-lg transition ${activeTab !== 'whiteboard' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
             >
               Streams View
             </motion.button>
@@ -1305,29 +1360,63 @@ function SessionRoomInner() {
           </div>
 
           <div className="flex-1 overflow-hidden">
-            {activeTab === 'video' ? (
-              <VideoGrid
-                localStream={localStream}
-                remoteStreams={remoteStreams}
-                micEnabled={micEnabled}
-                camEnabled={camEnabled}
-                toggleMic={toggleMic}
-                toggleCam={toggleCam}
-                audioConstraints={audioConstraints}
-                updateAudioConstraints={updateAudioConstraints}
-                screenSharing={screenSharing}
-                toggleScreenShare={toggleScreenShare}
-                socket={socket}
-              />
-            ) : (
-              <Whiteboard socket={socket} sessionId={sessionId} />
-            )}
+            {/* Desktop layout: left column contains video or whiteboard */}
+            <div className="hidden lg:block h-full">
+              {activeTab === 'whiteboard' ? (
+                <Whiteboard socket={socket} sessionId={sessionId} />
+              ) : (
+                <VideoGrid
+                  localStream={localStream}
+                  remoteStreams={remoteStreams}
+                  micEnabled={micEnabled}
+                  camEnabled={camEnabled}
+                  toggleMic={toggleMic}
+                  toggleCam={toggleCam}
+                  audioConstraints={audioConstraints}
+                  updateAudioConstraints={updateAudioConstraints}
+                  screenSharing={screenSharing}
+                  toggleScreenShare={toggleScreenShare}
+                  socket={socket}
+                />
+              )}
+            </div>
+
+            {/* Mobile layout: content displays active tab */}
+            <div className="block lg:hidden h-full">
+              {activeTab === 'video' && (
+                <VideoGrid
+                  localStream={localStream}
+                  remoteStreams={remoteStreams}
+                  micEnabled={micEnabled}
+                  camEnabled={camEnabled}
+                  toggleMic={toggleMic}
+                  toggleCam={toggleCam}
+                  audioConstraints={audioConstraints}
+                  updateAudioConstraints={updateAudioConstraints}
+                  screenSharing={screenSharing}
+                  toggleScreenShare={toggleScreenShare}
+                  socket={socket}
+                />
+              )}
+              {activeTab === 'whiteboard' && (
+                <Whiteboard socket={socket} sessionId={sessionId} />
+              )}
+              {activeTab === 'chat' && (
+                <Chat socket={socket} sessionId={sessionId} />
+              )}
+              {activeTab === 'files' && (
+                <FileShare sessionId={sessionId} />
+              )}
+              {activeTab === 'ai' && (
+                <AIAssistantPanel sessionId={sessionId} transcripts={transcripts} />
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Right Column: Chat & Repository Drawer */}
-        <div className="w-96 border-l border-white/10 p-4 flex flex-col space-y-4 bg-black/25">
-          <div className="flex border-b border-white/10 pb-2 select-none space-x-4 text-xs font-cyber font-bold">
+        {/* Right Column: Chat & Repository Drawer (Desktop Only) */}
+        <div className="hidden lg:flex w-96 border-l border-white/10 p-4 flex-col space-y-4 bg-black/25">
+          <div className="flex border-b border-white/10 pb-2 select-none space-x-4 text-xs font-cyber font-cyber font-bold">
             <button
               onClick={() => setActiveTab('chat')}
               className={`pb-1 border-b-2 transition ${activeTab === 'chat' ? 'border-purple-500 text-purple-400' : 'border-transparent text-gray-500'}`}
@@ -1379,7 +1468,7 @@ function SessionRoomInner() {
       )}
 
       {showDiagnostics && (
-        <div className="absolute right-4 bottom-4 w-[420px] p-5 bg-[#080512]/95 border border-purple-500/30 rounded-3xl shadow-2xl z-50 text-[10px] font-mono text-gray-300 space-y-4 max-h-[80vh] overflow-y-auto backdrop-blur-lg select-none border-t-2 border-t-purple-500/70">
+        <div className="absolute right-2 sm:right-4 bottom-2 sm:bottom-4 w-[calc(100vw-1rem)] sm:w-[420px] p-5 bg-[#080512]/95 border border-purple-500/30 rounded-3xl shadow-2xl z-50 text-[10px] font-mono text-gray-300 space-y-4 max-h-[80vh] overflow-y-auto backdrop-blur-lg select-none border-t-2 border-t-purple-500/70">
           <div className="flex justify-between items-center border-b border-white/10 pb-2">
             <h3 className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 uppercase tracking-widest font-cyber">Diagnostics Terminal</h3>
             <button onClick={() => setShowDiagnostics(false)} className="text-gray-500 hover:text-white transition font-bold text-xs">✕</button>

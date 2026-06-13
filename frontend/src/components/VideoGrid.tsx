@@ -264,7 +264,7 @@ const VideoGrid = memo(function VideoGrid({
     <div className="flex flex-col h-full space-y-4">
       {/* Markup Toolbar */}
       {(role === 'agent' || role === 'supervisor') && (
-        <div className="flex bg-white/5 border border-white/10 p-2 rounded-xl self-start space-x-2 select-none text-xs font-cyber font-bold items-center shrink-0">
+        <div className="flex bg-white/5 border border-white/10 p-2 rounded-xl self-start space-x-2 select-none text-xs font-cyber font-bold items-center shrink-0 overflow-x-auto no-scrollbar max-w-full">
           <span className="text-gray-500 uppercase tracking-widest text-[9px] mr-2">Screen Markup:</span>
           <motion.button
             whileHover={{ scale: 1.03 }}
@@ -507,7 +507,7 @@ const VideoGrid = memo(function VideoGrid({
             onClick={() => setShowFiltersMenu(!showFiltersMenu)}
             className="p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 rounded-xl transition flex items-center gap-2 text-xs font-semibold"
           >
-            <Sliders size={15} /> Audio Processing
+            <Sliders size={15} /> <span className="hidden sm:inline">Audio Processing</span>
           </motion.button>
 
           {showFiltersMenu && (
